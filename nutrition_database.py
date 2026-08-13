@@ -108,5 +108,5 @@ if __name__ == "__main__":
 model = YOLO("yolov8s.pt")
 class_names = list(model.names.values())
 
-biuld_database(class_names)
+build_database(class_names)
 

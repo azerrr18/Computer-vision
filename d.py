@@ -8,3 +8,5 @@ results[0].show()
 print(results[0].boxes.cls)
 print(model.names)
 
+
+
