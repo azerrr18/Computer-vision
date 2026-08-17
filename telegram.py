@@ -2,44 +2,52 @@ import asyncio
 from os import getenv
 from pathlib import Path
 from dotenv import load_dotenv
-from aiogram.fsm.context import FSMContext
+from handlers import calories
 
-from aiogram.fsm.state import StatesGroup,State
+from aiogram.filters import Command,CommandStart
 import os
 from aiogram import Bot , Dispatcher,F
 from aiogram.types import Message
-from aiogram.filters import CommandStart,Command
+
+
 
 dp = Dispatcher()
-with open("bot.env", "w", encoding="utf-8") as f:
-    f.write("Bot_Token=8792187702:AAGC38MLNdC3axnPeOMzJMNmLjYxNmZCJvU\n")
+
+
+
+
+BASE_DIR = Path(__file__).resolve().parent
+ENV_FILE = BASE_DIR / ".env"
+
+print("Python file:", Path(__file__).resolve())
+print(".env path:", ENV_FILE)
+print(".env exists:", ENV_FILE.exists())
+
+load_dotenv(ENV_FILE)
+
+bot_token = os.getenv("BOT_TOKEN")
+
+print("Token exists:", bool(bot_token))
+print("Token length:", len(bot_token) if bot_token else 0)
 
 @dp.message(CommandStart())
-async def cmd_start(message:Message):
-    await message.answer("Hello please upload your photo:")
+async def start(message:Message,):
+    await message.answer("Please upload a photo")
+
+
 
 @dp.message(Command('get_photo'))
 async def get_photo(message:Message,):
     await message.answer_photo(photo="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRf56WdJA1tr3WU5vzYWpJM-aQOdiETb74LFeti7R7-_g&s=10.jpg",
     caption = "Pizza")
 
-@dp.message(F.photo)
-async def  upload_photo(message:Message,bot=Bot):
-    photo = message.photo[-1]
-    file = await bot.get_file(photo.file_id)
-    await bot.download_file(file.file_path,r"C:\Users\AZER\Downloads\banana.jpg")
-    await message.answer("You upload a photo")
+
 
 async def main():
-    load_dotenv("bot.env")
-    print("Does file Exists?", Path("bot.env").exists())
-    print("All Variables:", dict(os.environ).get("BOT_TOKEN", "Not Found"))
-    token = getenv("Bot_Token")
-    print("Token loaded:", bool(token))
-    if not token:
-        error  = "No token Provided"
-        raise ValueError(error)
-    bot = Bot(token=token)
+    
+    dp.include_router(calories)
+
+    bot = Bot(token=bot_token)
 
     print("Starting bot....")
     try:

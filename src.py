@@ -28,7 +28,7 @@ class SimpleDatasetDownloader():
         if path and os.path.exists(path):
             files = os.listdir(path)
             print(f"\n There are {len(files)}")
-            for f in files[:limit:]:
+            for f in files[:limit]:
                 print(f"  - {f}")
             if len(files)>limit:
                 print(f" Remained {len(files)-limit} files")
